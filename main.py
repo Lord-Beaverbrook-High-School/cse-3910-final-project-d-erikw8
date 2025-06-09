@@ -401,7 +401,7 @@ def banker(values, currentRound, previousOffers, pool):
     mean = (mean + (pool*0.2) / n + 1)
 
     # increases value of deal per round based on an increasing percentage of the average
-    # algorithm comes from my research of a few deal or no deal games in real life
+    # includes the performace of the users pool to slightly impact result as an incentive
     if currentRound == 1:
         offer = mean * 0.2
 
@@ -554,14 +554,14 @@ while True:
 
         # if the user selects keep you win the money what is in your case
         if finalChoice == "KEEP":
-            print(f"You have won {green}${format(valuesRandom[my_case - 1], ',')}{white}! Congratulations!")
+            print(f"You have won {green}${format(case_objects[my_case-1].value, ',')}{white}! Congratulations!")
             break
 
-        # if the user selects swap then they win the money in the other case
+        # if the user selects question than they need to answer correctly
         elif finalChoice == "QUESTION":
             correct = select_question(my_case)
             if correct:
-                print(f"\nCongratulations! You have won {green}${format(case_objects[my_case].value, ',')}{white}!")
+                print(f"\nCongratulations! You have won {green}${format(pool, ',')}{white}!")
             else:
                 print(f"Sorry, you dont get any money.")
 
