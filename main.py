@@ -61,6 +61,7 @@ questions = ["What color are school buses in the United States?",
 "Which famous historical figure was known as the “Conqueror”?",
 "Which ancient civilization is credited with creating the first written language?"]
 
+#each option is formatted into the array by index
 options_a = ["A) Red", "A) Cat", "A) Venus", "A) Soccer", "A) Earth", "A) Buzz", "A) Toronto", "A) Elephant", "A) Asia", "A) Tomato",
 "A) Au", "A) Abraham Lincoln", "A) 1905", "A) The Lion King", "A) Oxygen", "A) Boston", "A) Galileo Galilei", "A) Claude Monet",
 "A) Steel", "A) Neville Chamberlain", "A) Oxygen", "A) Tokyo", "A) Yuan", "A) English", "A) Amazon River", "A) Neil Armstrong",
@@ -97,6 +98,7 @@ key = ["C", "C", "B", "B", "B", "B", "C", "B", "C", "B", "A", "C", "B", "C", "A"
 "C", "C", "B", "D", "A", "D", "C", "B", "D", "B", "B", "B", "C", "C", "C", "A", "A", "C", "C", "D",
 "C", "B", "B", "B", "B", "A", "C", "B", "C", "A", "D", "A"]
 
+#special math questions
 s_question =  ["What is the square root of 144?",
 "What is 11 × 12?",
 "If x + 5 = 13, what is x?",
@@ -112,7 +114,7 @@ s_question =  ["What is the square root of 144?",
 "If a shirt costs $40 and is discounted by 25%, what is the sale price?",
 "If 6 pens cost $9, how much do 4 pens cost at the same rate?",
 "If a book is $12 and you buy 3, how much change do you get from $50?",
-"What is ¾ of 64?",
+"What is 3/4 of 64?",
 "What is 1/3 of 90 plus 1/6 of 60?",
 "If a car travels 60 miles in 1 hour, how far does it travel in 2.5 hours?",
 "What is the next prime number after 29?",
@@ -120,7 +122,9 @@ s_question =  ["What is the square root of 144?",
 
 s_key = [12, 132, 8, 18, 169, 2, 9, 5, 40, 12, 24, 55, 30, 6, 14, 48, 55, 150, 31, 625]
 
+#initializes the case with its properies
 class Case:
+    #contructor adds number value and difficulty, as well as everything for questions and wether it was opened
     def __init__(self, number, value, difficulty):
         self.number = number
         self.value = value
@@ -133,6 +137,7 @@ class Case:
         self.key = ""
         self.isEmpty = False
 
+    #getters and setters
     def get_number(self):
         return self.number
 
@@ -151,6 +156,7 @@ class Case:
     def set_difficulty(self, x):
         self.difficulty = x
 
+    # inserts the question into the case
     def set_question(self, question, a, b, c, d, key):
         self.question = question
         self.option_a = a
@@ -159,17 +165,21 @@ class Case:
         self.option_d = d
         self.key = key
 
+    # easy display of case contents
     def __str__(self):
         return f"Case: {self.number}, Value: ${format(self.value, ',')}"
 
+    #prints out in monetary form
     def print_value(self):
         return f"${format(self.value, ',')}"
 
+    # prints case number specifically
     def print_case(self):
         return str(self.number)
 
+    # question method that operates to display and ask questions
     def ask_question(self):
-        print(f"Diff: {self.difficulty}")
+        #print(f"Diff: {self.difficulty}")
         print(f"Here's the question in the case:\n{self.question}\n{self.option_a}\n{self.option_b}\n{self.option_c}\n{self.option_d}\n")
 
         while True:
@@ -192,7 +202,9 @@ class Case:
             except ValueError:
                 print("Choice invalid, try again.")
 
+#Special case that does math instead of
 class MathCase(Case):
+    #inherited constructor
     def __init__(self, number, value, difficulty):
         super().__init__(number, value, difficulty)
 
@@ -203,8 +215,9 @@ class MathCase(Case):
     def __str__(self):
         return f"Case: {self.number}, Value: ${format(self.value, ',')}**"
 
+    #asks the question for math and overrides the old way of doing it
     def ask_question(self):
-        print(f"--**MATH CHALLENGE**--")
+        print(f"\n--**MATH CHALLENGE**--")
         print(f"Here's the question in the case:\n{self.question}\n")
 
         while True:
@@ -222,22 +235,21 @@ class MathCase(Case):
             except ValueError:
                 print("Choice invalid, try again.")
 
+#picks what question to assign
 def select_question(i):
     if case_objects[i].__class__.__name__ == "MathCase":
         rand = random.randint(0, len(s_question))
         case_objects[i].set_question(s_question[rand], "", "", "", "", s_key[rand])
-        correct = case_objects[i].ask_question()
     else:
         rand = random.randint(0, 1)
-        print((case_objects[i].difficulty * 2) + rand - 1)
+        #print((case_objects[i].difficulty * 2) + rand - 1)
         case_objects[i].set_question(questions[(case_objects[i].difficulty * 2) + rand - 2],
                                      options_a[(case_objects[i].difficulty * 2) + rand - 2],
                                      options_b[(case_objects[i].difficulty * 2) + rand - 2],
                                      options_c[(case_objects[i].difficulty * 2) + rand - 2],
                                      options_d[(case_objects[i].difficulty * 2) + rand - 2],
                                      key[(case_objects[i].difficulty * 2) + rand - 2])
-        correct = case_objects[i].ask_question()
-
+    correct = case_objects[i].ask_question()
     return correct
 
 def displayValues(values):
@@ -246,13 +258,9 @@ def displayValues(values):
     Inputs:  (list of all values remaining)
     Output: None
     """
-
     print("\n------VALUES------")
-
-    # prints all integers in formatted commas and dollar signs with appropriate padding
-    # according to length
     for i in range(13):
-        if case_objects[i].isEmpty:
+        if values[i] == " ":
             print(end="       | ")
         elif len(str(values[i])) == 1:
             print(f"${values[i]}", end="     | ")
@@ -268,7 +276,7 @@ def displayValues(values):
             print(f"${values[i]}", end="| ")
         else:
             print(f"${values[i]}", end=" ")
-        if case_objects[i + 13].isEmpty:
+        if values[i + 13] == " ":
             print()
         else:
             # format function is used here to give the integer an appearance of monetary
@@ -279,7 +287,6 @@ def displayValues(values):
 
     # sleep function from time module adds delay for visual effect by pausing the program
     sleep(1.5)
-
 
 def displayCases():
     """
@@ -306,7 +313,7 @@ def displayCases():
 
 def playRound(currentRound, pool, values):
     """
-    Starts a new round of the game, and .
+    Starts a new round of the game, and based on the current round gives ou an amount of cases to go through. It calls upon the object that youre targeting to remove and open the case with its question.
     Inputs: caseList (list of all cases remaining)
     Output: None
     """
@@ -338,17 +345,19 @@ def playRound(currentRound, pool, values):
                 caseSelection = int(input("\nSelect a case: "))
                 is_found = False
                 for i in range(26):
-                    if caseSelection == case_objects[i].number:
-                        print(f"Case {case_objects[i].number} has {green}{case_objects[i].print_value()}{white} in it.")
+                    if caseSelection == case_objects[i].number and caseSelection != 0:
+                        print(f"\nCase {case_objects[i].number} has {green}{case_objects[i].print_value()}{white} in it.")
                         correct = select_question(i)
                         if correct:
                             pool += case_objects[i].value
                         else:
                             pass
                         is_found = True
-                        case_objects[i].value = 0
+                        #case_objects[i].value = 0
                         case_objects[i].number = 0
                         case_objects[i].isEmpty = True
+                        values[values.index(case_objects[i].value)] = " "
+                        print(f"The size of the pool is {green}${format(pool, ',')}{white}")
                     else:
                         pass
                 """"""
@@ -388,7 +397,8 @@ def banker(values, currentRound, previousOffers, pool):
             mean += i
             n += 1
 
-    mean = (mean + (pool*0.5) / n + 1)
+    # mean adds an element of the current pool to the average
+    mean = (mean + (pool*0.2) / n + 1)
 
     # increases value of deal per round based on an increasing percentage of the average
     # algorithm comes from my research of a few deal or no deal games in real life
@@ -459,6 +469,8 @@ difficulties =  {0.01: 1, 1: 2, 5: 3, 10: 4, 25: 5, 50: 6, 75: 7, 100: 8, 200: 9
 valuesRandom = values.copy()
 pool = 0
 
+
+
 case_objects = []
 
 # setting the randomized list of values to pair to each case index respectively
@@ -466,17 +478,23 @@ random.seed(None)
 random.shuffle(valuesRandom)
 
 
+
+value_to_pos = {0:0.01, 1:1, 2:5, 3:10, 4:25, 5:50, 6:75, 7:100, 8:200, 9:300, 10:400, 11:500, 12:750, 13:1000, 14:5000, 15:10000, 16:25000, 17:50000, 18:75000, 19:100000, 20:200000, 21:300000, 22:400000, 23:500000,
+          24:750000, 25:1000000}
+
 for i in range(26):
     rand = random.randint(0, 10)
     if rand == 10:
         case_objects.append(MathCase(caseList[i], valuesRandom[i], difficulties[valuesRandom[i]]))
     else:
         case_objects.append(Case(caseList[i], valuesRandom[i], difficulties[valuesRandom[i]]))
-def print_all(case_objects):
+
+"""def print_all(case_objects):
     for i in range(26):
         print(case_objects[i])
         print(case_objects[i].__class__.__name__)
-print_all(case_objects)
+print_all(case_objects)"""
+
 
 
 # intro
@@ -526,9 +544,8 @@ while currentRound <= 9:
     previousOffers = banker(values, currentRound, previousOffers, pool)
     currentRound += 1
 
-# final aspect of the game forces the user to keep their case or trade it
-print("\nOnly one case remains. You can now choose to keep your current case, or take\n"
-      "home the other case on the board. What will you do?")
+# final aspect of the game forces the user to keep their case or claim pool money
+print("\nOnly one case remains. You can now choose to keep your current case, or claim your pool money by answering a difficult question. What will you do?")
 
 while True:
     try:
